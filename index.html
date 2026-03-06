@@ -3,178 +3,584 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IBD Pharmacological Agents Summary</title>
+<title>Seizure Types – Muscle Movement Demonstration</title>
 <style>
-  html { scroll-behavior: smooth; }
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: Calibri, 'Segoe UI', sans-serif; font-size: 11pt; color: #000; background: #fff; }
-  table { border-collapse: collapse; width: auto; table-layout: auto; margin: 0 auto; }
-  th, td { border: 1px solid #bbb; padding: 5px 7px; vertical-align: top; font-size: 11pt; line-height: 1.35; white-space: normal; word-wrap: break-word; max-width: 180px; }
-  th { background: #000; color: #fff; font-weight: bold; text-align: left; vertical-align: middle; position: sticky; top: 0; z-index: 10; }
-  td b { font-weight: bold; }
-  td i { font-style: italic; }
-  td:first-child, th:first-child { min-width: 100px; white-space: normal; }
-  td:nth-child(2) { min-width: 90px; white-space: normal; }
-  a.abbr-link { color: inherit; text-decoration: underline dotted; text-underline-offset: 2px; cursor: pointer; }
-  a.abbr-link:hover { color: #1565C0; text-decoration: underline; }
-  .abbrev b.highlight { color: #1565C0; background: #E3F2FD; border-radius: 3px; padding: 0 2px; transition: color 0.5s, background 0.5s; }
-  .abbrev b.fade-out { color: #000; background: transparent; transition: color 1.5s, background 1.5s; }
-  #back-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: #1565C0; color: #fff; border: none; padding: 8px 16px; border-radius: 20px; font-size: 11pt; font-family: Calibri, sans-serif; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 100; transition: opacity 0.3s; }
-  #back-btn:hover { background: #0D47A1; }
-  .abbrev { font-size: 10pt; padding: 8px 10px; line-height: 1.5; background: #fff; }
+
+  :root {
+    --bg: #f5f0eb;
+    --card: #ffffff;
+    --dark: #1a1a2e;
+    --accent: #c0392b;
+    --accent2: #2c3e50;
+    --blue: #2980b9;
+    --text: #2c2c2c;
+    --muted: #6b7280;
+    --border: #e0d8cf;
+  }
+
+  body {
+    font-family: 'Archivo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    text-align: center;
+    padding: 28px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--dark);
+  }
+
+  header p { color: var(--muted); font-size: 0.82rem; margin-top: 4px; }
+
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 16px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    padding: 7px 15px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .tab:hover { border-color: var(--accent); color: var(--accent); }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; }
+
+  .main { max-width: 820px; margin: 20px auto; padding: 0 16px; display: grid; gap: 16px; }
+
+  .canvas-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    position: relative;
+  }
+
+  canvas { display: block; width: 100%; height: auto; }
+
+  .phase-bar {
+    position: absolute; top: 12px; left: 12px;
+    padding: 5px 14px; border-radius: 6px;
+    font-size: 0.78rem; font-weight: 700;
+    background: rgba(192,57,43,0.12); color: var(--accent);
+    backdrop-filter: blur(6px); transition: all 0.3s; pointer-events: none;
+  }
+  .phase-bar.calm { background: rgba(41,128,185,0.12); color: var(--blue); }
+
+  .timer-badge {
+    position: absolute; top: 12px; right: 12px;
+    padding: 5px 10px; border-radius: 6px;
+    font-size: 0.72rem; font-weight: 600;
+    background: rgba(0,0,0,0.06); color: var(--muted);
+    font-variant-numeric: tabular-nums; pointer-events: none;
+  }
+
+  .controls { display: flex; justify-content: center; gap: 10px; padding: 12px 0 4px; }
+
+  .btn {
+    padding: 9px 22px; border-radius: 8px;
+    border: 1.5px solid var(--border); background: var(--card);
+    color: var(--text); font-family: 'Archivo', sans-serif;
+    font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.25s;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn.on { background: var(--dark); color: #fff; border-color: var(--dark); }
+
+  .speed-controls { display: flex; align-items: center; gap: 6px; justify-content: center; padding-bottom: 8px; }
+  .speed-controls span { font-size: 0.75rem; color: var(--muted); }
+  .speed-btn {
+    width: 34px; height: 26px; border-radius: 5px;
+    border: 1px solid var(--border); background: var(--card);
+    font-size: 0.72rem; font-weight: 700; color: var(--muted);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .speed-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .speed-btn.active { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+
+  .info {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+
+  .info h2 { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--dark); margin-bottom: 6px; }
+
+  .info .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 4px;
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 10px;
+  }
+  .tag.motor { background: rgba(192,57,43,0.1); color: var(--accent); }
+  .tag.nonmotor { background: rgba(41,128,185,0.1); color: var(--blue); }
+
+  .info p { color: #555; font-size: 0.88rem; line-height: 1.7; }
+
+  .muscle-indicator { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .muscle-indicator .dot { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: var(--muted); }
+  .muscle-indicator .dot::before { content: ''; width: 8px; height: 8px; border-radius: 2px; }
+  .dot.tense::before { background: #c0392b; }
+  .dot.jerk::before { background: #e67e22; }
+  .dot.limp::before { background: #7f8c8d; }
+  .dot.normal::before { background: #27ae60; }
+
+  footer { text-align: center; padding: 24px; font-size: 0.72rem; color: var(--muted); }
 </style>
 </head>
 <body>
-<table>
-<thead>
-<tr>
-  <th colspan="2">Drug class</th>
-  <th>Agents</th>
-  <th>Mechanism</th>
-  <th>Efficacy &amp; onset</th>
-  <th>Key adverse events</th>
-  <th>Monitoring &amp; precautions</th>
-  <th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td colspan="2" style="background:#FFF7E1;"><b>1. Corticosteroids</b><br><i>(Induction only)</i></td>
-  <td style="background:#FFF7E1;"><b>Prednisone/ Prednisolone</b><br><i>20–60 mg <a class="abbr-link" href="#abbrev-row" data-target="def-PO">PO</a> daily</i><br><br><b>Methylprednisolone</b><br><i>15–60 mg <a class="abbr-link" href="#abbrev-row" data-target="def-PO">PO</a>/<a class="abbr-link" href="#abbrev-row" data-target="def-IV">IV</a></i><br><br><b>Hydrocortisone</b><br><i>300 mg <a class="abbr-link" href="#abbrev-row" data-target="def-IV">IV</a> ÷ 3; 100 mg <a class="abbr-link" href="#abbrev-row" data-target="def-PR">PR</a></i><br><br><b>Budesonide</b> (Entocort, Uceris)<br><i>6–9 mg <a class="abbr-link" href="#abbrev-row" data-target="def-PO">PO</a> daily</i></td>
-  <td style="background:#FFF7E1;">Potent anti-inflammatory: suppresses T-cells and pro-inflammatory cytokines<br><br><b>Budesonide: </b>extensive first-pass metabolism → low systemic bioavailability → fewer systemic side effects</td>
-  <td style="background:#FFF7E1;"><b>Rapid onset</b><br>Used to quickly induce remission in active flares<br><br><b style="color:#EE0000">NOT for maintenance</b><br>Short-term bridge to safer long-term therapy</td>
-  <td style="background:#FFF7E1;"><b>• </b>Cataracts<br><b>• </b>Hypertension<br><b>• </b>Hyperglycaemia<br><b>• </b>Adrenal suppression<br><b>• </b>Osteoporosis<br><b>• </b>Infection risk ↑<br><b>• </b>Growth delay (children)</td>
-  <td style="background:#FFF7E1;">Limit to shortest duration possible<br><br>Taper gradually to avoid adrenal crisis<br><br>Monitor glucose, <a class="abbr-link" href="#abbrev-row" data-target="def-BP">BP</a>, bone density with extended use</td>
-  <td style="background:#FFF7E1;"><b>Budesonide preferred</b> when possible (fewer systemic effects)<br><br>Use as overlap/bridge while initiating long-term maintenance agent</td>
-</tr>
-<tr>
-  <td colspan="2" style="background:#F1F7ED;"><b>2. Aminosalicylates</b><br><i>(</i><b style="color:#5B883C"><a class="abbr-link" href="#abbrev-row" data-target="def-5-ASA">5-ASA</a> agents</b><i>)</i><br><i>Induction +</i><i> </i><i>Maintenance</i></td>
-  <td style="background:#F1F7ED;"><b>Sulfasalazine</b><br><i>(mesalamine + sulfapyridine)</i><br><br><b>Mesalamine/Mesalazine</b><br><i>(Lialda, Apriso – once daily)</i><br><br><b>Olsalazine</b><br><i>(two <a class="abbr-link" href="#abbrev-row" data-target="def-5-ASA">5-ASA</a> molecules linked)</i><br><br><b>Balsalazide</b><br><i>(inert carrier molecule)</i></td>
-  <td style="background:#F1F7ED;">Exact mechanism unclear; modulates inflammatory cascade<br><br>Delivers <a class="abbr-link" href="#abbrev-row" data-target="def-5-ASA">5-ASA</a> to inflamed <a class="abbr-link" href="#abbrev-row" data-target="def-GI">GI</a> areas via:<br><b>• </b>Diazo bond (cleaved by colonic bacteria)<br><b>• </b>pH-dependent release formulations<br><br><i>Carrier molecule or formulation controls </i><b><i>WHERE</i></b><i> drug is released</i></td>
-  <td style="background:#F1F7ED;"><a class="abbr-link" href="#abbrev-row" data-target="def-UC">UC</a> induction and maintenance (mild–moderate)<br><br>Brand choice depends on location of inflammation<br><br><b>Lialda/Apriso: </b>allow once-daily dosing</td>
-  <td style="background:#F1F7ED;"><b>Sulfasalazine:</b><br><b>• </b>Dose-related: <a class="abbr-link" href="#abbrev-row" data-target="def-HA">HA</a>, <a class="abbr-link" href="#abbrev-row" data-target="def-N-V">N/V</a>, fatigue<br><b>• </b>Idiosyncratic: <a class="abbr-link" href="#abbrev-row" data-target="def-BM">BM</a> suppression, hepatitis, pneumonitis<br><b>• </b>Sulfonamide allergy risk<br><br><b>Non-sulfa agents:</b><br><b>• </b>Better tolerated<br><b>• </b>Olsalazine: secretory diarrhoea<br><b>• </b>Rare: interstitial nephritis</td>
-  <td style="background:#F1F7ED;"><b>Sulfasalazine: </b>coadminister folic acid (folate deficiency risk)<br><br>Intermittent serum creatinine monitoring (nephritis risk)<br><br><b style="color:#CC0000">Do NOT crush/chew</b><span style="color:#1A1A1A"> </span>(delayed-release formulations)</td>
-  <td style="background:#F1F7ED;">Mesalamine = mesalazine = <a class="abbr-link" href="#abbrev-row" data-target="def-5-ASA">5-ASA</a> (same drug, different naming conventions)<br><br>Sulfapyridine carrier causes most of sulfasalazine’s side effects</td>
-</tr>
-<tr>
-  <td rowspan="2" style="background:#F4ECFA;"><b>3. Immunomodulators</b></td>
-  <td style="background:#F4ECFA;"><b style="color:#7030A0">i. Thiopurines</b><br><i>(Maintenance)</i></td>
-  <td style="background:#F4ECFA;"><b>Azathioprine (<a class="abbr-link" href="#abbrev-row" data-target="def-AZA">AZA</a>)</b><br><br><b>6-Mercaptopurine (<a class="abbr-link" href="#abbrev-row" data-target="def-6-MP">6-MP</a>)</b></td>
-  <td style="background:#F4ECFA;">Inhibit purine biosynthesis → reduced <a class="abbr-link" href="#abbrev-row" data-target="def-GI">GI</a> inflammation<br><br>Metabolised to:<br><b>• <a class="abbr-link" href="#abbrev-row" data-target="def-6-MMP">6-MMP</a></b> (hepatotoxicity marker)<br><b>• <a class="abbr-link" href="#abbrev-row" data-target="def-6-TGN">6-TGN</a></b> (efficacy marker)</td>
-  <td style="background:#F4ECFA;">Best for maintaining remission and reducing steroid dependence<br><br><b>Slow onset: 3–12 months</b><br>→ Not ideal for active disease</td>
-  <td style="background:#F4ECFA;"><b>• </b>Myelosuppression<br><b>• </b>Infections<br><b>• </b>Pancreatitis<br><b>• </b>Lymphoma (↑ risk with long-term use &amp; age ≥65)</td>
-  <td style="background:#F4ECFA;"><b style="color:#6A1B9A">Before starting:</b><br><b>• <a class="abbr-link" href="#abbrev-row" data-target="def-TPMT">TPMT</a> activity</b> (low → 30–80% dose ↓)<br><b>• <a class="abbr-link" href="#abbrev-row" data-target="def-NUDT15">NUDT15</a> allele</b> (myelosuppression risk)<br><br><b style="color:#6A1B9A">Ongoing:</b><br><a class="abbr-link" href="#abbrev-row" data-target="def-CBC">CBC</a> w/ diff, <a class="abbr-link" href="#abbrev-row" data-target="def-LFTs">LFTs</a>, renal function</td>
-  <td style="background:#F4ECFA;"><a class="abbr-link" href="#abbrev-row" data-target="def-6-TGN">6-TGN</a> and <a class="abbr-link" href="#abbrev-row" data-target="def-6-MMP">6-MMP</a> levels guide dose optimisation<br><br>Risk increases significantly after age 65</td>
-</tr>
-<tr>
-  <td style="background:#F4ECFA;"><b style="color:#6A1B9A">ii. Methotrexate</b><br><i>(Maintenance)</i></td>
-  <td style="background:#F4ECFA;"><b>Methotrexate (<a class="abbr-link" href="#abbrev-row" data-target="def-MTX">MTX</a>)</b><br><i><a class="abbr-link" href="#abbrev-row" data-target="def-SC">SC</a> recommended; oral no longer recommended for <a class="abbr-link" href="#abbrev-row" data-target="def-CD">CD</a></i><br><br>Monotherapy or combo (to reduce antibody formation)</td>
-  <td style="background:#F4ECFA;">Folate antagonist<br><br>Primarily for maintaining remission in mild Crohn’s disease</td>
-  <td style="background:#F4ECFA;">Maintenance of remission in mild <a class="abbr-link" href="#abbrev-row" data-target="def-CD">CD</a><br><br>Can add to biologics to boost efficacy and reduce immunogenicity</td>
-  <td style="background:#F4ECFA;"><b>• </b>Myelosuppression<br><b>• </b>Hepatotoxicity<br><b>• </b><a class="abbr-link" href="#abbrev-row" data-target="def-N-V">N/V</a><br><b>• </b>Pneumonitis<br><b>• </b>Renal dysfunction<br><b>• </b>Anaemia<br><b>• </b>Pulmonary fibrosis (rare)</td>
-  <td style="background:#F4ECFA;"><b>• Folic acid 1 mg daily</b><br>• Reduce/stop alcohol<br>• Chest X-ray before starting<br><b style="color:#CC0000">• Teratogenic – assess pregnancy plans</b><br>• Routine <a class="abbr-link" href="#abbrev-row" data-target="def-CBC">CBC</a> + <a class="abbr-link" href="#abbrev-row" data-target="def-CMP">CMP</a></td>
-  <td style="background:#F4ECFA;">Useful combo partner with biologics<br><br><b style="color:#CC0000">CONTRAINDICATED in pregnancy</b></td>
-</tr>
-<tr>
-  <td rowspan="3" style="background:#E9F1F7;"><b>4. Biologics</b></td>
-  <td style="background:#E9F1F7;"><b style="color:#1565C0">i. Anti-<a class="abbr-link" href="#abbrev-row" data-target="def-TNF">TNF-α</a></b></td>
-  <td style="background:#E9F1F7;"><b>Infliximab</b> (chimeric; 75% human/25% mouse)<br><br><b>Adalimumab</b> (humanised <a class="abbr-link" href="#abbrev-row" data-target="def-mAb">mAb</a>)<br><br><b>Golimumab</b> (humanised <a class="abbr-link" href="#abbrev-row" data-target="def-mAb">mAb</a>)<br><br><b>Certolizumab</b> (pegylated <a class="abbr-link" href="#abbrev-row" data-target="def-Ab">Ab</a> fragment)</td>
-  <td style="background:#E9F1F7;">Reduce <a class="abbr-link" href="#abbrev-row" data-target="def-TNF">TNF-α</a> activity → decreased inflammatory response</td>
-  <td style="background:#E9F1F7;"><b>Onset: 2–8 weeks</b><br><br>Clinical remission in ~30–50% of patients<br><br>Best response in treatment-naïve patients</td>
-  <td style="background:#E9F1F7;"><b>• </b><a class="abbr-link" href="#abbrev-row" data-target="def-TB">TB</a>/Hep B reactivation<br><b>• </b>Heart failure exacerbation<br><b>• </b>Lymphoma (incl. hepatosplenic T-cell)<br><b>• </b>↑ <a class="abbr-link" href="#abbrev-row" data-target="def-HSTCL">HSTCL</a> risk with thiopurine combo (young males)<br><b>• </b>Skin cancer risk</td>
-  <td style="background:#E9F1F7;"><b style="color:#1565C0">Before starting:</b><br>• <a class="abbr-link" href="#abbrev-row" data-target="def-TB">TB</a> screening (<a class="abbr-link" href="#abbrev-row" data-target="def-PPD">PPD</a>/<a class="abbr-link" href="#abbrev-row" data-target="def-IGRA">IGRA</a>)<br>• Hep B panel<br><br><b style="color:#1565C0">Ongoing:</b><br>• Regular derm exams + sunscreen<br>• Avoid in decompensated <a class="abbr-link" href="#abbrev-row" data-target="def-HF">HF</a></td>
-  <td style="background:#E9F1F7;">Multiple biosimilars available (4 infliximab, 10 adalimumab)<br><br>Biosimilars: similar efficacy at lower cost; not identical generics</td>
-</tr>
-<tr>
-  <td style="background:#E9F1F7;"><b style="color:#1565C0">ii. Integrin</b><br><b style="color:#1565C0">Inhibitors</b></td>
-  <td style="background:#E9F1F7;"><b>Vedolizumab</b><br><i>(“gut-selective” – <span style="font-size:12pt;letter-spacing:0.5px;">α₄β₇</span>)</i><br><br><b>Natalizumab</b><br><i style="color:#CC0000">(last-line; <a class="abbr-link" href="#abbrev-row" data-target="def-REMS">REMS</a> required)</i></td>
-  <td style="background:#E9F1F7;">Block leukocyte migration and adhesion across endothelium → reduced inflammation<br><br><b>Vedolizumab: </b>targets <span style="font-size:12pt;letter-spacing:0.5px;">α₄β₇</span> (gut-selective = less systemic immunosuppression)</td>
-  <td style="background:#E9F1F7;"><b>Onset: 10–12 weeks</b><br><br>Clinical remission ~30–50%<br><br>Vedolizumab preferred due to better safety profile</td>
-  <td style="background:#E9F1F7;"><b style="color:#CC0000">Natalizumab:</b><br><b>• <a class="abbr-link" href="#abbrev-row" data-target="def-PML">PML</a> (progressive multifocal leukoencephalopathy)</b><br><br><b style="color:#2E7D32">Vedolizumab:</b><br>• <a class="abbr-link" href="#abbrev-row" data-target="def-PML">PML</a> warning in label but NOT seen in practice<br>• Improved safety profile</td>
-  <td style="background:#E9F1F7;"><b>Natalizumab: </b><a class="abbr-link" href="#abbrev-row" data-target="def-REMS">REMS</a> programme, <a class="abbr-link" href="#abbrev-row" data-target="def-JC-virus">JC virus</a> monitoring<br><br>Vedolizumab: routine infection monitoring</td>
-  <td style="background:#E9F1F7;"><b>Vedolizumab = safer choice</b><br><br>Natalizumab reserved as last line due to <a class="abbr-link" href="#abbrev-row" data-target="def-PML">PML</a> risk<br><br>1 biosimilar available for natalizumab</td>
-</tr>
-<tr>
-  <td style="background:#E9F1F7;"><b style="color:#1565C0">iii. Interleukin</b><br><b style="color:#1565C0">Inhibitors</b></td>
-  <td style="background:#E9F1F7;"><b>Ustekinumab</b><br><i>(<a class="abbr-link" href="#abbrev-row" data-target="def-IL">IL</a>-12/23 inhibitor)</i><br><br><b>Risankizumab</b><br><i>(selective <a class="abbr-link" href="#abbrev-row" data-target="def-IL">IL</a>-23 inhibitor)</i><br><br><b>Guselkumab</b><br><i>(selective <a class="abbr-link" href="#abbrev-row" data-target="def-IL">IL</a>-23 inhibitor)</i><br><br><b>Mirikizumab</b><br><i>(selective <a class="abbr-link" href="#abbrev-row" data-target="def-IL">IL</a>-23 inhibitor)</i></td>
-  <td style="background:#E9F1F7;">Block interleukin signalling pathways (<a class="abbr-link" href="#abbrev-row" data-target="def-IL">IL</a>-12 and/or <a class="abbr-link" href="#abbrev-row" data-target="def-IL">IL</a>-23) involved in inflammation</td>
-  <td style="background:#E9F1F7;"><b>Onset: up to 12 weeks</b><br><br>Clinical remission ~50%<br><br><b>Risankizumab: </b>similar clinical remission but superior endoscopic healing vs ustekinumab (head-to-head in <a class="abbr-link" href="#abbrev-row" data-target="def-CD">CD</a>)</td>
-  <td style="background:#E9F1F7;">Overall well tolerated<br><br>Minimal risks for:<br>• Immunogenicity<br>• Infection<br>• Malignancy</td>
-  <td style="background:#E9F1F7;"><b style="color:#1565C0">Before starting:</b><br>• <a class="abbr-link" href="#abbrev-row" data-target="def-TB">TB</a> screening<br>• Hepatitis panel<br><br>Biosimilars available (3 for ustekinumab)</td>
-  <td style="background:#E9F1F7;"><b style="color:#1565C0">Best-tolerated biologic class</b><br><br>~50% remission rate (highest among biologics)</td>
-</tr>
-<tr>
-  <td rowspan="2" style="background:#FDEDF2;"><b>5. Small molecules</b></td>
-  <td style="background:#FDEDF2;"><b style="color:#C62828">i. <a class="abbr-link" href="#abbrev-row" data-target="def-JAK">JAK</a> Inhibitors</b></td>
-  <td style="background:#FDEDF2;"><b>Tofacitinib</b><br><i>(non-selective JAK1/2/3/<a class="abbr-link" href="#abbrev-row" data-target="def-TYK2">TYK2</a></i><i style="color:#1A1A1A">)</i><br><b style="color:#CC0000"><a class="abbr-link" href="#abbrev-row" data-target="def-UC">UC</a> only</b><br><br><b>Upadacitinib</b><br><i>(preferential JAK1)</i><br><b style="color:#2E7D32"><a class="abbr-link" href="#abbrev-row" data-target="def-UC">UC</a> + <a class="abbr-link" href="#abbrev-row" data-target="def-CD">CD</a></b><br><br><b>Filgotinib</b><br><i>(preferential JAK1)</i><br><b style="color:#CC0000"><a class="abbr-link" href="#abbrev-row" data-target="def-UC">UC</a> only</b></td>
-  <td style="background:#FDEDF2;">Inhibit Janus kinase (<a class="abbr-link" href="#abbrev-row" data-target="def-JAK">JAK</a>) signalling pathways that drive inflammation</td>
-  <td style="background:#FDEDF2;"><b style="color:#2E7D32">Fast onset: 2–4 weeks</b><br><br>Clinical remission ~30–50%<br><br><b>Upadacitinib:</b> now positioned as higher-efficacy first-line option (<a class="abbr-link" href="#abbrev-row" data-target="def-UC">UC</a> + <a class="abbr-link" href="#abbrev-row" data-target="def-CD">CD</a>) without requiring prior anti-TNF failure</td>
-  <td style="background:#FDEDF2;"><b style="color:#CC0000">Black box warning:</b><br>• Major <a class="abbr-link" href="#abbrev-row" data-target="def-CV">CV</a> events (<a class="abbr-link" href="#abbrev-row" data-target="def-MACE">MACE</a>)<br>• Venous thromboembolism<br>• Malignancies<br><br>• Herpes zoster reactivation<br>• CYP3A4 drug interactions</td>
-  <td style="background:#FDEDF2;"><b style="color:#C62828">Before starting:</b><br>• <a class="abbr-link" href="#abbrev-row" data-target="def-TB">TB</a> + Hep panel<br><b>• Shingles vaccine series</b><br><br>Dose adjust for renal/hepatic impairment<br><br>Screen for CYP3A4 interactions</td>
-  <td style="background:#FDEDF2;"><b>Fastest onset</b> of all <a class="abbr-link" href="#abbrev-row" data-target="def-IBD">IBD</a> medications<br><br>Oral dosing (no injections/infusions)<br><br>Black box warning still applies; insurers may still require step therapy for tofacitinib</td>
-</tr>
-<tr>
-  <td style="background:#FDEDF2;"><b style="color:#C62828">ii. <a class="abbr-link" href="#abbrev-row" data-target="def-S1P">S1P</a> Receptor</b><br><b style="color:#C62828">Modulators</b></td>
-  <td style="background:#FDEDF2;"><b>Ozanimod</b><br><b>Etrasimod</b><br><br><i><a class="abbr-link" href="#abbrev-row" data-target="def-UC">UC</a> only (moderate–severe)</i></td>
-  <td style="background:#FDEDF2;">Block <a class="abbr-link" href="#abbrev-row" data-target="def-S1P">S1P</a> receptors → trap lymphocytes in lymph nodes → prevent migration to <a class="abbr-link" href="#abbrev-row" data-target="def-GI">GI</a> tract → reduced inflammation</td>
-  <td style="background:#FDEDF2;"><b>Onset: up to 10 weeks</b><br><br>Clinical remission 32–37%</td>
-  <td style="background:#FDEDF2;">• Transient bradycardia<br><br><b style="color:#CC0000">CONTRAINDICATED:</b><br>• Recent cardiac events (&lt;6 mo)<br>• Conduction abnormalities (3rd-degree <a class="abbr-link" href="#abbrev-row" data-target="def-AVB">AVB</a>)<br>• Severe untreated sleep apnoea</td>
-  <td style="background:#FDEDF2;"><b style="color:#C62828">Before starting:</b><br><b>• <a class="abbr-link" href="#abbrev-row" data-target="def-ECG">ECG</a></b><br><b>• Varicella zoster immunity</b><br><b>• Ophthalmological exam</b><br><b>• Skin examination</b><br><br>Screen drug interactions on ongoing basis</td>
-  <td style="background:#FDEDF2;">Oral dosing (convenient)<br><br>Cardiac screening is essential before initiation</td>
-</tr>
-<tr>
-  <td colspan="2" style="background:#F2F2F2;"><b>6. Antibiotics</b><br><i>Specific</i><br><i>indications</i></td>
-  <td style="background:#F2F2F2;"><b>Metronidazole</b><br><b>Ciprofloxacin</b><br><b>Vancomycin</b></td>
-  <td style="background:#F2F2F2;">Alter gut microbial flora → modulate inflammation</td>
-  <td style="background:#F2F2F2;"><b>Limited indications:</b><br>• Pouchitis<br>• Perianal <a class="abbr-link" href="#abbrev-row" data-target="def-CD">CD</a> (abscesses, fistulas)</td>
-  <td style="background:#F2F2F2;">Varies by agent; monitor tolerability</td>
-  <td style="background:#F2F2F2;">Monitor treatment duration, response, and tolerability</td>
-  <td style="background:#F2F2F2;">Adjunctive/supportive role, not primary <a class="abbr-link" href="#abbrev-row" data-target="def-IBD">IBD</a> therapy</td>
-</tr>
-<tr>
-  <td colspan="8" class="abbrev" id="abbrev-row" style="text-align:justify;"><b class="abbr-def" id="def-5-ASA">5-ASA</b>: 5-aminosalicylic acid; <b class="abbr-def" id="def-6-MMP">6-MMP</b>: 6-methylmercaptopurine (metabolite); <b class="abbr-def" id="def-6-MP">6-MP</b>: 6-mercaptopurine; <b class="abbr-def" id="def-6-TGN">6-TGN</b>: 6-thioguanine nucleotides (metabolites); <b class="abbr-def" id="def-Ab">Ab</b>: antibody; <b class="abbr-def" id="def-AVB">AVB</b>: atrioventricular block; <b class="abbr-def" id="def-AZA">AZA</b>: azathioprine; <b class="abbr-def" id="def-BM">BM</b>: bone marrow; <b class="abbr-def" id="def-BP">BP</b>: blood pressure; <b class="abbr-def" id="def-CBC">CBC</b>: complete blood count; <b class="abbr-def" id="def-CD">CD</b>: Crohn’s disease; <b class="abbr-def" id="def-CMP">CMP</b>: comprehensive metabolic panel; <b class="abbr-def" id="def-CV">CV</b>: cardiovascular; <b class="abbr-def" id="def-ECG">ECG</b>: electrocardiogram; <b class="abbr-def" id="def-GI">GI</b>: gastrointestinal; <b class="abbr-def" id="def-HA">HA</b>: headache; <b class="abbr-def" id="def-HF">HF</b>: heart failure; <b class="abbr-def" id="def-HSTCL">HSTCL</b>: hepatosplenic T-cell lymphoma; <b class="abbr-def" id="def-IBD">IBD</b>: inflammatory bowel disease; <b class="abbr-def" id="def-IGRA">IGRA</b>: interferon-gamma release assay; <b class="abbr-def" id="def-IL">IL</b>: interleukin; <b class="abbr-def" id="def-IV">IV</b>: intravenous; <b class="abbr-def" id="def-JAK">JAK</b>: Janus kinase; <b class="abbr-def" id="def-JC-virus">JC virus</b>: John Cunningham virus; <b class="abbr-def" id="def-LFTs">LFTs</b>: liver function tests; <b class="abbr-def" id="def-mAb">mAb</b>: monoclonal antibody; <b class="abbr-def" id="def-MACE">MACE</b>: major adverse cardiovascular events; <b class="abbr-def" id="def-MTX">MTX</b>: methotrexate; <b class="abbr-def" id="def-N-V">N/V</b>: nausea and vomiting; <b class="abbr-def" id="def-NSAIDs">NSAIDs</b>: nonsteroidal anti-inflammatory drugs; <b class="abbr-def" id="def-NUDT15">NUDT15</b>: nudix hydrolase 15 (gene/variant affecting thiopurine toxicity); <b class="abbr-def" id="def-PO">PO</b>: by mouth (oral); <b class="abbr-def" id="def-PML">PML</b>: progressive multifocal leukoencephalopathy; <b class="abbr-def" id="def-PPD">PPD</b>: purified protein derivative (tuberculin skin test); <b class="abbr-def" id="def-PR">PR</b>: per rectum (rectal); <b class="abbr-def" id="def-REMS">REMS</b>: Risk Evaluation and Mitigation Strategy; <b class="abbr-def" id="def-S1P">S1P</b>: sphingosine-1-phosphate; <b class="abbr-def" id="def-SC">SC</b>: subcutaneous; <b class="abbr-def" id="def-TB">TB</b>: tuberculosis; <b class="abbr-def" id="def-TNF">TNF-α</b>: tumour necrosis factor alpha; <b class="abbr-def" id="def-TPMT">TPMT</b>: thiopurine S-methyltransferase; <b class="abbr-def" id="def-TYK2">TYK2</b>: tyrosine kinase 2; <b class="abbr-def" id="def-UC">UC</b>: ulcerative colitis</td>
-</tr>
-</tbody>
-</table>
 
-<button id="back-btn" onclick="goBack()">↑ Back</button>
+<header>
+  <h1>Generalised Seizure Types</h1>
+  <p>Animated demonstration of muscle activity patterns in each seizure type</p>
+</header>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="main">
+  <div class="canvas-card">
+    <canvas id="c" width="820" height="540"></canvas>
+    <div class="phase-bar" id="phaseBar">Standing</div>
+    <div class="timer-badge" id="timer">0.0 s</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn on" id="playBtn" onclick="togglePlay()">⏸ Pause</button>
+    <button class="btn" onclick="resetAnim()">↺ Restart</button>
+  </div>
+
+  <div class="speed-controls">
+    <span>Speed:</span>
+    <button class="speed-btn" data-s="0.3" onclick="setSpeed(0.3,this)">0.3×</button>
+    <button class="speed-btn" data-s="0.6" onclick="setSpeed(0.6,this)">0.6×</button>
+    <button class="speed-btn active" data-s="1" onclick="setSpeed(1,this)">1×</button>
+    <button class="speed-btn" data-s="1.5" onclick="setSpeed(1.5,this)">1.5×</button>
+  </div>
+
+  <div class="info">
+    <h2 id="infoTitle">Tonic-Clonic Seizure</h2>
+    <div class="tag motor" id="infoTag">Motor</div>
+    <p id="infoDesc"></p>
+    <div class="muscle-indicator">
+      <span class="dot tense">Tense / stiff</span>
+      <span class="dot jerk">Jerking</span>
+      <span class="dot limp">Limp / no tone</span>
+      <span class="dot normal">Normal resting</span>
+    </div>
+  </div>
+</div>
+
+<footer>Educational demonstration — Pharmacotherapy 3, Spring 2026</footer>
+
 <script>
-var savedScrollY = 0;
-var backBtn = document.getElementById('back-btn');
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
 
-function goBack() {
-  backBtn.style.display = 'none';
-  window.scrollTo({ top: savedScrollY, behavior: 'smooth' });
+const TYPES = [
+  { id:'tc', name:'Tonic-Clonic', tag:'Motor',
+    desc:'The most dramatic generalised seizure. Begins with a tonic phase (sustained stiffening of the entire body, ~10–20 s) — the patient falls, arms flex, legs extend rigidly. This is followed by a clonic phase (bilateral rhythmic jerking of all limbs, ~30–60 s) that gradually slows. Consciousness is lost throughout. A postictal phase follows with flaccid muscles and gradual recovery.' },
+  { id:'ton', name:'Tonic', tag:'Motor',
+    desc:'Sustained, bilateral muscle contraction causing stiffening without subsequent jerking. Arms typically flex and legs extend. Duration 10–60 seconds. The patient may fall if standing. Common during sleep in Lennox-Gastaut syndrome.' },
+  { id:'clo', name:'Clonic', tag:'Motor',
+    desc:'Bilateral rhythmic jerking movements of the limbs without a preceding tonic (stiffening) phase. Jerking gradually slows and stops. Rare in isolation in adults; more commonly seen in neonates and infants.' },
+  { id:'myo', name:'Myoclonic', tag:'Motor',
+    desc:'Brief, shock-like involuntary jerks lasting <100 ms. Usually bilateral. Consciousness is typically preserved. Often occurs shortly after waking. Characteristic of Juvenile Myoclonic Epilepsy (JME). The jerk is so fast it resembles being startled.' },
+  { id:'ato', name:'Atonic', tag:'Motor',
+    desc:'Sudden, complete loss of muscle tone. If standing, the patient collapses instantly ("drop attack"). Very brief (1–2 seconds). High risk of facial/head injury — protective helmets may be prescribed. Also seen in Lennox-Gastaut syndrome.' },
+  { id:'spa', name:'Epileptic Spasms', tag:'Motor',
+    desc:'Sudden, brief (1–5 s) flexion or extension of the trunk and limbs, occurring in clusters. Flexor type: "jackknife" — arms fling forward, body curls inward. Extensor type: back arches, limbs extend outward. Most common in infants (West syndrome / infantile spasms).' },
+  { id:'abs', name:'Absence', tag:'Nonmotor',
+    desc:'Brief episodes of blank staring and unresponsiveness lasting 5–30 seconds. No convulsive movement. Onset and offset are abrupt — the patient resumes activity as if nothing happened. May include subtle automatisms like lip smacking or eye blinking. Classic of Childhood Absence Epilepsy. EEG shows 3 Hz spike-and-wave.' }
+];
+
+let cur = 0, playing = true, t = 0, speed = 1;
+
+const tabsEl = document.getElementById('tabs');
+TYPES.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.className = 'tab' + (i===0?' active':'');
+  b.textContent = s.name;
+  b.onclick = () => { cur=i; t=0; document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i)); updateInfo(); };
+  tabsEl.appendChild(b);
+});
+
+function updateInfo() {
+  const s = TYPES[cur];
+  document.getElementById('infoTitle').textContent = s.name + ' Seizure';
+  document.getElementById('infoDesc').textContent = s.desc;
+  const tag = document.getElementById('infoTag');
+  tag.textContent = s.tag;
+  tag.className = 'tag ' + (s.tag==='Motor'?'motor':'nonmotor');
+}
+updateInfo();
+
+function togglePlay() {
+  playing = !playing;
+  const b = document.getElementById('playBtn');
+  b.textContent = playing ? '⏸ Pause' : '▶ Play';
+  b.classList.toggle('on', playing);
+}
+function resetAnim() { t=0; if(!playing){playing=true; const b=document.getElementById('playBtn'); b.textContent='⏸ Pause'; b.classList.add('on');} }
+function setSpeed(s, el) { speed=s; document.querySelectorAll('.speed-btn').forEach(b=>b.classList.toggle('active',parseFloat(b.dataset.s)===s)); }
+
+// ===== REALISTIC BODY DRAWING =====
+const SKIN = '#c99b7a';
+const SKIN_LT = '#dbb89e';
+const SKIN_DK = '#b38562';
+const SHIRT = '#34495e';
+const SHIRT_LT = '#3d566e';
+const PANTS = '#222d38';
+const PANTS_LT = '#2a3a4a';
+const HAIR = '#2c1a0e';
+const SHOE = '#1a1a1a';
+
+function jp(ox, oy, angle, len) {
+  return { x: ox + Math.sin(angle)*len, y: oy + Math.cos(angle)*len };
 }
 
-document.querySelectorAll('a.abbr-link').forEach(function(link) {
-  link.addEventListener('click', function(e) {
-    e.preventDefault();
-    // Save current scroll position
-    savedScrollY = window.scrollY;
-    
-    var targetId = this.getAttribute('data-target');
-    var target = document.getElementById(targetId);
-    if (target) {
-      document.querySelectorAll('.abbr-def.highlight, .abbr-def.fade-out').forEach(function(el) {
-        el.classList.remove('highlight', 'fade-out');
-      });
-      document.getElementById('abbrev-row').scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(function() {
-        target.classList.add('highlight');
-        // Show back button
-        backBtn.style.display = 'block';
-        setTimeout(function() {
-          target.classList.remove('highlight');
-          target.classList.add('fade-out');
-          setTimeout(function() {
-            target.classList.remove('fade-out');
-          }, 1500);
-        }, 2000);
-      }, 400);
-    }
-  });
-});
+function capsule(x1,y1,x2,y2,w1,w2,col) {
+  const dx=x2-x1, dy=y2-y1, len=Math.sqrt(dx*dx+dy*dy);
+  if(len<0.5) return;
+  const nx=-dy/len, ny=dx/len;
+  ctx.beginPath();
+  ctx.moveTo(x1+nx*w1, y1+ny*w1);
+  ctx.lineTo(x2+nx*w2, y2+ny*w2);
+  const a1 = Math.atan2(nx, ny);
+  ctx.arc(x2, y2, w2, a1-Math.PI/2, a1+Math.PI/2);
+  ctx.lineTo(x1-nx*w1, y1-ny*w1);
+  ctx.arc(x1, y1, w1, a1+Math.PI/2, a1+Math.PI*1.5);
+  ctx.closePath();
+  ctx.fillStyle = col;
+  ctx.fill();
+}
+
+function ell(cx,cy,rx,ry,col,ang) {
+  ctx.save();
+  ctx.translate(cx,cy);
+  if(ang) ctx.rotate(ang);
+  ctx.beginPath();
+  ctx.ellipse(0,0,rx,ry,0,0,Math.PI*2);
+  ctx.fillStyle=col;
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawBody(cx, baseY, P) {
+  const p = Object.assign({
+    bodyTilt:0, headTilt:0,
+    lArmA:0.3, lElbA:0.08, rArmA:-0.3, rElbA:-0.08,
+    lLegA:0.1, lKnA:0, rLegA:-0.1, rKnA:0,
+    yOff:0, xOff:0, eyesClosed:false, mouthOpen:false
+  }, P);
+
+  const ox = cx + (p.xOff||0);
+  const oy = baseY + (p.yOff||0);
+
+  // Skeleton
+  const hipY = oy, hipX = ox;
+  const spineLen = 110;
+  const shX = hipX + Math.sin(p.bodyTilt)*spineLen;
+  const shY = hipY - Math.cos(p.bodyTilt)*spineLen;
+  const nkX = shX + Math.sin(p.bodyTilt)*12;
+  const nkY = shY - Math.cos(p.bodyTilt)*12;
+
+  const headA = p.bodyTilt + (p.headTilt||0);
+  const hdX = nkX - Math.sin(headA)*32;
+  const hdY = nkY - Math.cos(headA)*32;
+
+  // Arms
+  const armOff = 28;
+  const lsX=shX-Math.cos(p.bodyTilt)*armOff, lsY=shY+Math.sin(p.bodyTilt)*armOff*0.15+4;
+  const rsX=shX+Math.cos(p.bodyTilt)*armOff, rsY=shY-Math.sin(p.bodyTilt)*armOff*0.15+4;
+  const lElb = jp(lsX, lsY, p.lArmA, 55);
+  const lHnd = jp(lElb.x, lElb.y, p.lArmA + p.lElbA, 50);
+  const rElb = jp(rsX, rsY, p.rArmA, 55);
+  const rHnd = jp(rElb.x, rElb.y, p.rArmA + p.rElbA, 50);
+
+  // Legs
+  const legOff = 14;
+  const lhX=hipX-legOff, lhY=hipY+4;
+  const rhX=hipX+legOff, rhY=hipY+4;
+  const lKn = jp(lhX, lhY, p.lLegA, 60);
+  const lFt = jp(lKn.x, lKn.y, p.lLegA + p.lKnA, 55);
+  const rKn = jp(rhX, rhY, p.rLegA, 60);
+  const rFt = jp(rKn.x, rKn.y, p.rLegA + p.rKnA, 55);
+
+  ctx.save();
+
+  // -- BACK ARM (right) --
+  capsule(rsX, rsY, rElb.x, rElb.y, 11, 9, SHIRT);
+  capsule(rElb.x, rElb.y, rHnd.x, rHnd.y, 8, 7, SKIN_DK);
+  ell(rHnd.x, rHnd.y, 8, 9, SKIN_DK);
+
+  // -- BACK LEG (right) --
+  capsule(rhX, rhY, rKn.x, rKn.y, 16, 12, PANTS);
+  capsule(rKn.x, rKn.y, rFt.x, rFt.y, 12, 10, PANTS);
+  // Shoe
+  const rShoeA = p.rLegA + (p.rKnA||0);
+  ell(rFt.x + Math.cos(rShoeA)*6, rFt.y - Math.sin(rShoeA)*2 + 3, 18, 8, SHOE, rShoeA*0.3);
+
+  // -- TORSO --
+  ctx.beginPath();
+  const tw1 = 30, tw2 = 22;
+  const sNx = -Math.cos(p.bodyTilt), sNy = Math.sin(p.bodyTilt);
+  ctx.moveTo(shX - Math.cos(p.bodyTilt)*tw1, shY + Math.sin(p.bodyTilt)*tw1*0.1);
+  ctx.lineTo(shX + Math.cos(p.bodyTilt)*tw1, shY - Math.sin(p.bodyTilt)*tw1*0.1);
+  ctx.lineTo(hipX + tw2, hipY);
+  ctx.lineTo(hipX - tw2, hipY);
+  ctx.closePath();
+  ctx.fillStyle = SHIRT;
+  ctx.fill();
+
+  // Shirt highlights
+  ctx.beginPath();
+  ctx.moveTo(shX - Math.cos(p.bodyTilt)*tw1 + 3, shY + Math.sin(p.bodyTilt)*tw1*0.1 + 2);
+  ctx.lineTo(shX, shY + 8);
+  ctx.lineTo(hipX - tw2 + 6, hipY - 2);
+  ctx.lineTo(hipX - tw2 + 3, hipY);
+  ctx.closePath();
+  ctx.fillStyle = SHIRT_LT;
+  ctx.fill();
+
+  // Collar
+  ctx.beginPath();
+  ctx.moveTo(shX - 14, shY - 3);
+  ctx.quadraticCurveTo(nkX, shY + 10, shX + 14, shY - 3);
+  ctx.fillStyle = SKIN;
+  ctx.fill();
+
+  // Belt
+  ctx.fillStyle = '#111';
+  ctx.fillRect(hipX - tw2, hipY - 2, tw2*2, 6);
+  // Belt buckle
+  ctx.fillStyle = '#888';
+  ctx.fillRect(hipX - 4, hipY - 1, 8, 4);
+
+  // -- FRONT LEG (left) --
+  capsule(lhX, lhY, lKn.x, lKn.y, 16, 12, PANTS_LT);
+  capsule(lKn.x, lKn.y, lFt.x, lFt.y, 12, 10, PANTS_LT);
+  const lShoeA = p.lLegA + (p.lKnA||0);
+  ell(lFt.x + Math.cos(lShoeA)*6, lFt.y - Math.sin(lShoeA)*2 + 3, 18, 8, '#222', lShoeA*0.3);
+
+  // -- FRONT ARM (left) --
+  capsule(lsX, lsY, lElb.x, lElb.y, 11, 9, SHIRT_LT);
+  capsule(lElb.x, lElb.y, lHnd.x, lHnd.y, 8, 7, SKIN_LT);
+  ell(lHnd.x, lHnd.y, 8, 9, SKIN_LT);
+  // Fingers hint
+  const fAng = p.lArmA + p.lElbA;
+  for(let i=-1;i<=1;i++) {
+    const fx = lHnd.x + Math.sin(fAng+i*0.15)*10;
+    const fy = lHnd.y + Math.cos(fAng+i*0.15)*10;
+    capsule(lHnd.x, lHnd.y, fx, fy, 3, 2, SKIN_LT);
+  }
+
+  // -- NECK --
+  capsule(nkX, nkY+5, hdX + Math.sin(headA)*8, hdY + Math.cos(headA)*20, 10, 11, SKIN);
+
+  // -- HEAD --
+  ell(hdX, hdY, 23, 28, SKIN);
+
+  // Hair
+  ctx.beginPath();
+  ctx.ellipse(hdX, hdY - 12, 24, 22, headA*0.15, Math.PI + 0.3, Math.PI*2 - 0.3);
+  ctx.fillStyle = HAIR;
+  ctx.fill();
+  // Hair side
+  ell(hdX - 22, hdY - 4, 6, 16, HAIR, -0.1 + headA*0.3);
+  ell(hdX + 22, hdY - 4, 6, 16, HAIR, 0.1 + headA*0.3);
+
+  // Ears
+  ell(hdX - 23, hdY + 2, 6, 9, SKIN_DK, headA*0.2);
+  ell(hdX + 23, hdY + 2, 6, 9, SKIN_DK, headA*0.2);
+
+  // Face
+  const fo = Math.sin(headA)*4;
+
+  // Eyebrows
+  ctx.strokeStyle = HAIR;
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.moveTo(hdX - 11 + fo, hdY - 6);
+  ctx.quadraticCurveTo(hdX - 7 + fo, hdY - 9, hdX - 3 + fo, hdY - 6);
+  ctx.moveTo(hdX + 3 + fo, hdY - 6);
+  ctx.quadraticCurveTo(hdX + 7 + fo, hdY - 9, hdX + 11 + fo, hdY - 6);
+  ctx.stroke();
+
+  if (p.eyesClosed) {
+    ctx.strokeStyle = '#5a3e2b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(hdX - 10 + fo, hdY + 1);
+    ctx.quadraticCurveTo(hdX - 7 + fo, hdY + 3, hdX - 4 + fo, hdY + 1);
+    ctx.moveTo(hdX + 4 + fo, hdY + 1);
+    ctx.quadraticCurveTo(hdX + 7 + fo, hdY + 3, hdX + 10 + fo, hdY + 1);
+    ctx.stroke();
+  } else {
+    // Eye whites
+    ell(hdX - 7 + fo, hdY + 1, 5, 5, '#fff');
+    ell(hdX + 7 + fo, hdY + 1, 5, 5, '#fff');
+    // Iris
+    ell(hdX - 7 + fo, hdY + 1.5, 3, 3.2, '#3d2b1f');
+    ell(hdX + 7 + fo, hdY + 1.5, 3, 3.2, '#3d2b1f');
+    // Pupil
+    ell(hdX - 7 + fo, hdY + 1.8, 1.5, 1.6, '#111');
+    ell(hdX + 7 + fo, hdY + 1.8, 1.5, 1.6, '#111');
+    // Eye shine
+    ell(hdX - 8.5 + fo, hdY + 0.2, 1, 1, 'rgba(255,255,255,0.7)');
+    ell(hdX + 5.5 + fo, hdY + 0.2, 1, 1, 'rgba(255,255,255,0.7)');
+  }
+
+  // Nose
+  ctx.beginPath();
+  ctx.moveTo(hdX + fo, hdY + 5);
+  ctx.quadraticCurveTo(hdX + 3 + fo, hdY + 11, hdX + fo, hdY + 12);
+  ctx.strokeStyle = SKIN_DK;
+  ctx.lineWidth = 1.8;
+  ctx.stroke();
+
+  // Mouth
+  if (p.mouthOpen) {
+    ell(hdX + fo, hdY + 17, 6, 5, '#7a4a3a');
+    ell(hdX + fo, hdY + 16, 5, 2, '#fff'); // teeth hint
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(hdX - 6 + fo, hdY + 16);
+    ctx.quadraticCurveTo(hdX + fo, hdY + 19, hdX + 6 + fo, hdY + 16);
+    ctx.strokeStyle = '#8b6e5e';
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+// ===== SEIZURE POSE FUNCTIONS =====
+function poseTC(t) {
+  const c = t % 11;
+  if (c < 3.5) {
+    const f = Math.min(c/1.0, 1);
+    return { pose: { bodyTilt:0, lArmA:0.3-1.8*f, rArmA:-0.3+1.8*f, lElbA:0.08+1.5*f, rElbA:-0.08-1.5*f, lLegA:0.1-0.05*f, rLegA:-0.1+0.05*f, lKnA:-0.1*f, rKnA:0.1*f, headTilt:-0.05*f, eyesClosed:true, mouthOpen:f>0.5 }, label:'Tonic phase — entire body stiffens rigidly', active:true };
+  } else if (c < 8.5) {
+    const e=c-3.5, d=1-e/5*0.55, fr=14, j=Math.sin(e*fr)*d, j2=Math.cos(e*fr*0.85)*d;
+    return { pose: { bodyTilt:j*0.06, xOff:j*10, lArmA:-1.2+j*0.8, rArmA:1.2+j2*0.8, lElbA:1.3+j2*0.6, rElbA:-1.3+j*0.6, lLegA:0.1+j*0.25, rLegA:-0.1+j2*0.25, lKnA:j2*0.15, rKnA:j*0.15, headTilt:j*0.08, eyesClosed:true, mouthOpen:true }, label:'Clonic phase — rhythmic bilateral jerking', active:true };
+  } else {
+    const f=Math.min((c-8.5)/1,1);
+    return { pose: { bodyTilt:0.12*f, lArmA:0.6, rArmA:-0.5, lElbA:0.4, rElbA:-0.3, lLegA:0.2, rLegA:-0.15, lKnA:0.05, rKnA:-0.04, headTilt:0.1, yOff:12*f, eyesClosed:true }, label:'Postictal — muscles go limp, gradual recovery', active:false };
+  }
+}
+
+function poseTonic(t) {
+  const c=t%5.5, f=Math.min(c/0.8,1), r=c>4?(c-4)/1.5:0, s=f*(1-r);
+  return { pose: { lArmA:0.3-1.8*s, rArmA:-0.3+1.8*s, lElbA:0.08+1.6*s, rElbA:-0.08-1.6*s, lLegA:0.1-0.04*s, rLegA:-0.1+0.04*s, lKnA:-0.12*s, rKnA:0.12*s, headTilt:-0.06*s, eyesClosed:s>0.3, mouthOpen:s>0.6 }, label:'Sustained bilateral stiffening — arms flex, legs extend', active:s>0.3 };
+}
+
+function poseClonic(t) {
+  const fr=11, j=Math.sin(t*fr)*0.65, j2=Math.cos(t*fr*0.9)*0.55;
+  return { pose: { bodyTilt:j*0.05, xOff:j*7, lArmA:0.3+j*0.9, rArmA:-0.3+j2*0.9, lElbA:0.08+j2*0.6, rElbA:-0.08+j*0.6, lLegA:0.1+j*0.3, rLegA:-0.1+j2*0.3, lKnA:j2*0.2, rKnA:j*0.2, headTilt:j*0.07, eyesClosed:true, mouthOpen:true }, label:'Rhythmic bilateral jerking — no tonic phase', active:true };
+}
+
+function poseMyo(t) {
+  const c=t%2.2, w=0.12, isJ=c<w, j=isJ?Math.sin(c/w*Math.PI):0;
+  return { pose: { bodyTilt:-j*0.08, yOff:-j*16, lArmA:0.3-j*1.5, rArmA:-0.3+j*1.5, lElbA:0.08-j*0.7, rElbA:-0.08+j*0.7, headTilt:-j*0.12, mouthOpen:isJ }, label:isJ?'Shock-like jerk (<100 ms) — bilateral':'Normal — consciousness preserved', active:isJ };
+}
+
+function poseAtonic(t) {
+  const c=t%4.5; let f=0;
+  if(c<1)f=0; else if(c<1.4)f=(c-1)/0.4; else if(c<3.2)f=1; else f=1-(c-3.2)/1.3;
+  return { pose: { bodyTilt:0.4*f, yOff:f*90, xOff:f*12, lArmA:0.3+f*0.8, rArmA:-0.3-f*0.6, lElbA:0.08+f*0.9, rElbA:-0.08-f*0.7, lLegA:0.1+f*0.55, rLegA:-0.1-f*0.4, lKnA:f*1.0, rKnA:-f*0.8, headTilt:f*0.3, eyesClosed:f>0.3 }, label:f<0.1?'Standing — then sudden loss of tone':(f>0.9?'Complete collapse — "drop attack"':'Sudden loss of all muscle tone'), active:f>0.2 };
+}
+
+function poseSpasms(t) {
+  const c=t%3.5; const isF=c<1.8; let s=0;
+  if(isF){if(c<0.25)s=c/0.25;else if(c<1)s=1-(c-0.25)/0.75;else s=0;}
+  else{const d=c-1.8;if(d<0.25)s=d/0.25;else if(d<1)s=1-(d-0.25)/0.75;else s=0;}
+  if(isF) return { pose: { bodyTilt:0.28*s, yOff:s*18, lArmA:0.3-1.7*s, rArmA:-0.3+1.7*s, lElbA:0.08+2.0*s, rElbA:-0.08-2.0*s, lLegA:0.1-0.5*s, rLegA:-0.1+0.5*s, lKnA:-0.4*s, rKnA:0.4*s, headTilt:0.18*s, eyesClosed:s>0.3, mouthOpen:s>0.5 }, label:s>0.1?'Flexor spasm — "jackknife" body curls inward':'Between spasms', active:s>0.15 };
+  return { pose: { bodyTilt:-0.18*s, yOff:-s*10, lArmA:0.3+1.0*s, rArmA:-0.3-1.0*s, lElbA:0.08-0.3*s, rElbA:-0.08+0.3*s, lLegA:0.1+0.18*s, rLegA:-0.1-0.18*s, lKnA:-0.15*s, rKnA:0.15*s, headTilt:-0.18*s, eyesClosed:s>0.3, mouthOpen:s>0.5 }, label:s>0.1?'Extensor spasm — back arches, limbs extend':'Between spasms', active:s>0.15 };
+}
+
+function poseAbsence(t) {
+  const bk = Math.sin(t*5.5)>0.93;
+  const lip = Math.sin(t*3)>0.85;
+  return { pose: { eyesClosed:bk, mouthOpen:lip }, label:'Staring blankly — unresponsive (5–30 sec)', active:false };
+}
+
+const FNS = [poseTC, poseTonic, poseClonic, poseMyo, poseAtonic, poseSpasms, poseAbsence];
+
+// ===== RENDER =====
+function render() {
+  ctx.fillStyle = '#faf7f3';
+  ctx.fillRect(0,0,W,H);
+
+  const res = FNS[cur](t);
+  const p = res.pose || {};
+  const figCX = W/2, figBaseY = H - 75 - 115;
+
+  // Active glow
+  if (res.active) {
+    const pulse = (Math.sin(t*6)+1)*0.5;
+    const grd = ctx.createRadialGradient(figCX+(p.xOff||0), figBaseY-40+(p.yOff||0), 0, figCX+(p.xOff||0), figBaseY-40+(p.yOff||0), 160+pulse*20);
+    grd.addColorStop(0, `rgba(192,57,43,${0.05+pulse*0.03})`);
+    grd.addColorStop(1, 'rgba(192,57,43,0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0,0,W,H);
+  }
+
+  // Shadow
+  const sy = H - 72;
+  const spread = 55 + (p.yOff||0)*0.3;
+  const grd2 = ctx.createRadialGradient(figCX+(p.xOff||0)*0.5, sy, 0, figCX+(p.xOff||0)*0.5, sy, Math.max(35,spread));
+  grd2.addColorStop(0, 'rgba(0,0,0,0.14)');
+  grd2.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grd2;
+  ctx.beginPath();
+  ctx.ellipse(figCX+(p.xOff||0)*0.5, sy, Math.max(35,spread), Math.max(8,spread*0.15), 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Floor
+  ctx.strokeStyle = '#d4cdc4'; ctx.lineWidth=1; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(120,H-70); ctx.lineTo(W-120,H-70); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#bbb'; ctx.font='11px Archivo'; ctx.textAlign='center';
+  ctx.fillText('ground', W/2, H-54);
+
+  drawBody(figCX, figBaseY, p);
+
+  // UI updates
+  const pb = document.getElementById('phaseBar');
+  pb.textContent = res.label;
+  pb.className = 'phase-bar' + (res.active?'':' calm');
+  document.getElementById('timer').textContent = t.toFixed(1) + ' s';
+}
+
+function loop() {
+  if(playing) t += 0.033 * speed;
+  render();
+  requestAnimationFrame(loop);
+}
+loop();
 </script>
 </body>
 </html>
